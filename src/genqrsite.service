@@ -1,0 +1,12 @@
+[Unit]
+Description=QR Code Generate site
+Documentation=https://github.com/suzukaotto/qr-gen-page
+After=network.target
+
+[Service]
+ExecStart=/bin/sudo /bin/bash /home/szkot/qr-gen_page/stater.sh
+Restart=always
+User=root
+
+[Install]
+WantedBy=multi-user.target

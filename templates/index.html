@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QR 코드 생성기</title>
+    <style>
+        #qr-div {
+            margin: 110px 5%;
+        }
+        .div-title {
+            font-family: arial;
+            font-size: 30px;
+            font-weight: bold;
+            text-shadow: 1px 1px 0 gray;
+            line-height: 30px;
+        }
+        #qrcode {
+            width: 256px;
+            height: 256px;
+            background-color: bisque;
+        }
+        #text {
+            margin-top: 10px;
+        }
+        #warning-alert {
+            margin-top: 10px;
+        }
+
+        .schema-buttons {
+            margin-top: 10px;
+        }
+    </style>
+
+    <link rel="stylesheet" href="style.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}"  type="image/x-icon">
+
+    <script type="text/javascript" src="{{ url_for('static', filename='javascript/jquery.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='javascript/qrcode.js') }}"></script>
+</head>
+
+<body>
+    <div id="head-button">
+        <button id="home-btn" class="btn btn-dark btn-sm animate__animated animate__fadeInLeft">홈으로</button>
+    </div>
+
+    <div id="main-div">
+        <div id="qr-div">
+            <p id="div-title" class="div-title">
+                SIMPLE<br>
+                QR Code Generator
+            </p>
+            <br>
+
+            <div class="d-flex align-items-center">
+                <div id="qrcode"></div>
+                <button id="download-btn" class="btn btn-success btn-sm ms-5 ">Download</button>
+            </div>
+            <br>
+
+            <div class="schema-buttons">
+                <button class="btn btn-primary btn-sm" onclick="input_schema('http')">HTTP</button>
+                <button class="btn btn-primary btn-sm" onclick="input_schema('https', 'qr.szk.kr')">HTTPS</button>
+                <button class="btn btn-primary btn-sm" onclick="input_schema('tel', '010-1234-5678')">TEL</button>
+                <button class="btn btn-primary btn-sm" onclick="input_schema('mailto', 'example@domain')">EMAIL</button>
+                <button class="btn btn-primary btn-sm" onclick="input_schema('maps', '?q=서울역')">MAPS</button>
+            </div>
+
+            <input id="text" type="text" name="text" class="form-control" placeholder="type of here . . . " value="" />
+            <div id="warning-alert" class="alert alert-warning" role="alert">
+                Please enter a value!
+            </div>
+            <br>
+        </div>
+    </div>
+
+    <script>
+        const home_btn = document.getElementById("home-btn")
+        const war_alert = document.getElementById("warning-alert")
+        const download_btn = document.getElementById("download-btn")
+
+        let qrcode  = new QRCode("qrcode");
+
+        home_btn.addEventListener('click', () => {
+            location.href = "{{ url_for('router.index') }}"
+        })
+
+        function makeCode() {
+            let elText = document.getElementById("text");
+
+            war_alert.style.display = 'none'
+            download_btn.style.display = 'block'
+
+            if (!elText.value) {
+                war_alert.style.display = 'block'
+                download_btn.style.display = 'none'
+                return;
+            }
+
+            qrcode.makeCode(elText.value);
+        }
+
+        makeCode();
+
+        $("#text").
+            on("blur", function () {
+                makeCode();
+            }).
+            on("keydown", function (e) {
+                if (e.keyCode == 13) {
+                    makeCode();
+                }
+            });
+
+        function input_schema(schema, etc="") {
+            let elText = document.getElementById("text");
+            elText.value = schema + ":" + etc;
+            makeCode();
+        }
+
+        document.getElementById("download-btn").addEventListener('click', () => {
+            const qrCanvas = document.querySelector("#qrcode canvas");
+            const qrImage = qrCanvas.toDataURL("image/png");
+            const link = document.createElement("a");
+            link.href = qrImage;
+            link.download = "qrcode.png";
+            link.click();
+        });
+    </script>
+</body>
+
+</html>
