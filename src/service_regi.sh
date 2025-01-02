@@ -1,6 +1,6 @@
 #!/bin/bash
 
-SERVICE_NAME="apiserver.service"
+SERVICE_NAME="genqrsite.service"
 SERVICE_FILE="./$SERVICE_NAME"
 SYSTEMD_PATH="/etc/systemd/system/$SERVICE_NAME"
 
